@@ -1,0 +1,99 @@
+---
+title: "week 5 - solutions"
+author: "Scott Gee"
+date: "23/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+Questions 2 and 3 seem a bit of a clunky way to answer it so if you have a better way to do it use it.
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(lubridate)
+library(data.table)
+
+dat <- read_excel('data.xlsx')
+```
+</div>
+*1*. For each `client`, work out the most recent `account manager`
+<div class="fold s">
+```{r most-recent-account-manager}
+dat_q1 <- dat %>%
+  select(Client, `Account Manager`, `From Date`) %>% 
+  distinct() %>% 
+  group_by(Client) %>% 
+  filter(`From Date` == max(`From Date`))
+```
+</div>
+*2*. Filter/replace the data so only the most recent `account manager` remains
+
+<div class="fold h">
+```{r}
+# It might be easier to join back to dat_q1 on just the client to get the latest account manager
+```
+</div>
+
+<div class="fold s">
+```{r filter-data}
+dat_q2 <- dat %>% 
+  group_by(Training, `Contact Email`, `Contact Name`, Client) %>% 
+  filter(`From Date` == max(`From Date`)) %>% 
+  inner_join(dat_q1, by = 'Client') %>% 
+  select(-ends_with(".x")) %>% 
+  rename(`From Date` = `From Date.y`,
+         `Account Manager` = `Account Manager.y`)
+```
+</div>
+*3*. Ensure the most recent client ID remains
+
+<div class="fold h">
+```{r}
+# It might be easier to join back to a dataframe like the below on the client/from date like 
+
+dat_q3_1 <- dat %>% 
+  select(Client, `Client ID`, `From Date`) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  group_by(Client) %>% 
+  filter(`From Date` == max(`From Date`)) %>% 
+  arrange(Client)
+```
+</div>
+
+
+<div class="fold s">
+```{r most-recent-client-id}
+dat_q3_1 <- dat %>% 
+  select(Client, `Client ID`, `From Date`) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  group_by(Client) %>% 
+  filter(`From Date` == max(`From Date`)) %>% 
+  arrange(Client)
+
+dat_q3_2 <- dat_q2 %>% 
+  ungroup() %>% 
+  inner_join(dat_q3_1, by = c('Client', 'From Date')) %>% 
+  select(-`Client ID.x`) %>% 
+  rename(`Client ID` = `Client ID.y`)
+
+```
+</div>
+
+*4*. Output
+<div class="fold s">
+```{r}
+fwrite(dat_q3_2, file = 'correct-output.csv')
+```
+

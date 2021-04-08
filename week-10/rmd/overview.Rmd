@@ -1,0 +1,36 @@
+---
+title: "week 10 - overview"
+author: "Scott Gee"
+date: "01/04/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+This exercise is mostly about joins. You'll need to use left joins from the `pokemon` dataframe to the `evolution` dataset more than once on different columns.
+
+Make sure you remove duplicates before you do the joins to avoid extra rows. This can be done with `distinct` in `dplyr`
+
+The trickiest part of this exercise is to create an `evolution_group` column which shows what the first evolution of the pokemon was. 
+
+I think it is best to create a dataframe with just the pokemon that do not evolve from anything. After you have done that the code below will be helpful.
+
+```{r, eval=FALSE}
+evolution_groups <- original_name_dataframe  %>% 
+  left_join(dataframe_for_q4 %>% select(Name, `Evolving to`, `Evolving from`),
+            by = c('original_name' = 'Evolving from')) %>% 
+  mutate(evolution_group = original_name) %>% 
+  rename(evolution_1 = Name,
+         evolution2 = `Evolving to`) %>% 
+  pivot_longer(-evolution_group) %>% 
+  filter(!is.na(value)) %>% 
+  distinct() 
+```
+
+This then needs to be joined back to your dataframe from q4. Some pokemon have an evolving from pokemon but this name is not in the original dataset so make sure you have the correct output at the end with `left_join` 

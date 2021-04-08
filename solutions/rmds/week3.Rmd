@@ -1,0 +1,112 @@
+---
+title: "week 3 - solutions"
+author: "Scott Gee"
+date: "22/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data (this also answers question 3)
+<div class="fold s">
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(lubridate)
+library(data.table)
+
+sheet_names <- excel_sheets('data.xlsx')
+
+sheet_names <- set_names(sheet_names, sheet_names) #this ensures that we can use an id column as the store name
+
+dat <- map_df(sheet_names, ~ read_excel('data.xlsx', sheet = .x), .id = 'store')
+```
+</div>
+*1*. Pivot new and existing and split into customer type and product
+
+<div class="fold h">
+```{r}
+# Use pivot_longer and then separate 
+```
+</div>
+<div class="fold s o ">
+```{r pivot-new-existing}
+dat_q1 <- dat %>% 
+  pivot_longer(`New - Saddles`:`Existing - Bags`, names_to = 'product_type', values_to = 'sales') %>% 
+  separate(product_type, into = c('customer_type', 'product')) 
+  
+```
+</div>
+*2*. Rename `sales` to `Products Sold`
+<div class="fold s o">
+```{r rename-column}
+dat_q2 <- rename(dat_q1, `Products Sold` = sales)
+
+```
+</div>
+*3*. Create a `store` column name (done in setup)
+
+*4*. Remove any unneceessary columns (not needed here for R)
+
+*5*. Turn `date` into `quarter`
+<div class="fold s">
+```{r}
+dat_q5 <- mutate(dat_q2, quarter = quarter(Date))
+```
+</div>
+*6*. Get aggregated products sold by:
+`Product`, `Quarter`
+<div class="fold s">
+```{r aggregate-1}
+dat_q6_1 <- dat_q5 %>% 
+  group_by(product, quarter) %>% 
+  summarise(`Products Sold` = sum(`Products Sold`))
+
+```
+</div>
+`Store`, `Customer Type`, `Product`
+<div class="fold s o ">
+
+```{r aggregate-2}
+dat_q6_2 <- dat_q5 %>% 
+  group_by(store, customer_type, product) %>% 
+  summarise(`Products Sold` = sum(`Products Sold`))
+```
+</div>
+
+Export data 
+
+<div class="fold s">
+```{r}
+fwrite(dat_q6_1, file = 'correct-output-1.csv')
+
+fwrite(dat_q6_2, file = 'correct-output-2.csv')
+```
+</div>
+
+These could both be written within one pipe like the below
+
+<div class="fold s o ">
+```{r one-pipe}
+dat %>% 
+  pivot_longer(`New - Saddles`:`Existing - Bags`, names_to = 'product_type', values_to = 'sales') %>% 
+  separate(product_type, into = c('customer_type', 'product')) %>%
+  rename(`Products Sold` = sales) %>% 
+  mutate(quarter = quarter(Date)) %>% 
+  group_by(product, quarter) %>% 
+  summarise(`Products Sold` = sum(`Products Sold`)) 
+
+dat %>% 
+  pivot_longer(`New - Saddles`:`Existing - Bags`, names_to = 'product_type', values_to = 'sales') %>% 
+  separate(product_type, into = c('customer_type', 'product')) %>%
+  rename(`Products Sold` = sales) %>% 
+  mutate(quarter = quarter(Date)) %>%
+  group_by(store, customer_type, product) %>% 
+  summarise(`Products Sold` = sum(`Products Sold`))
+```
+</div>

@@ -1,0 +1,24 @@
+---
+title: "week 12 - overview"
+author: "Scott Gee"
+date: "06/04/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+For this week you need to pivot a very wide dataset in to a longer one, filter to only include tourist arrival metrics and then get the arrivals by country and continent for each month.
+
+When using `pivot_longer` the columns needs to be the same type and this is not the case when reading in the files. This can be done by replacing the NAs with NA_integer_. In R there are different types of NA for characters and numbers. Then you'll need to make all the columns numeric. This can be done like the below:
+
+```{r, eval=FALSE}
+dataframe %>% 
+  mutate(across(starts_with('01'), as.numeric))
+```
+
+When looking at the countries arrivals, it may be best to split the dataframes in to the unknown countries for each continent and the known countries. You'll have to take away the individual country arrivals from the total arrivals for each continent. Look at the task and there should be some help. There are also some hints in the solutions for this

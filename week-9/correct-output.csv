@@ -1,0 +1,145 @@
+Area,Product Name,total_sales,rank,percentage_of_total_revenue
+Aberdeen,Hand Sanitiser,352.66,38,10%
+Aberdeen,"Soap, Bar",2507.05,1,69%
+Aberdeen,"Soap, Liquid",793,40,22%
+Arbroath,Hand Sanitiser,847.3,12,21.0%
+Arbroath,"Soap, Bar",687.05,41,17.0%
+Arbroath,"Soap, Liquid",2424.5,10,61.0%
+Ardgay,Hand Sanitiser,540.44,27,14%
+Ardgay,"Soap, Bar",1369.55,21,37%
+Ardgay,"Soap, Liquid",1833,22.5,49%
+Ashford (Kent),Hand Sanitiser,1025.92,5,45.0%
+Ashford (Kent),"Soap, Bar",509.6,45,23.0%
+Ashford (Kent),"Soap, Liquid",721.5,41,32.0%
+Aylesbury,Hand Sanitiser,815.24,15,19.0%
+Aylesbury,"Soap, Bar",882.7,33.5,20.0%
+Aylesbury,"Soap, Liquid",2645.5,7,61.0%
+Castle Douglas,Hand Sanitiser,412.2,35,13.0%
+Castle Douglas,"Soap, Bar",1465.1,19,46.0%
+Castle Douglas,"Soap, Liquid",1339,34,42.0%
+Cemmaes Road,Hand Sanitiser,1028.21,4,26.0%
+Cemmaes Road,"Soap, Bar",1137.5,25,28.0%
+Cemmaes Road,"Soap, Liquid",1859,20,46.0%
+Colwyn Bay,Hand Sanitiser,400.75,36,12.0%
+Colwyn Bay,"Soap, Bar",441.35,46,13.0%
+Colwyn Bay,"Soap, Liquid",2444,9,74.0%
+Darlington,Hand Sanitiser,469.45,31,17.0%
+Darlington,"Soap, Bar",1660.75,15,61.0%
+Darlington,"Soap, Liquid",591.5,45,22.0%
+Dorchester,Hand Sanitiser,249.61,47,4%
+Dorchester,"Soap, Bar",1815.45,7,33%
+Dorchester,"Soap, Liquid",3503.5,1,63%
+Edinburgh,Hand Sanitiser,712.19,19,23.0%
+Edinburgh,"Soap, Bar",1246.7,22,41.0%
+Edinburgh,"Soap, Liquid",1092,39,36.0%
+Ellon,Hand Sanitiser,909.13,8,34%
+Ellon,"Soap, Bar",1192.1,23,44%
+Ellon,"Soap, Liquid",598,44,22%
+Enniskillen,Hand Sanitiser,996.15,7,32.0%
+Enniskillen,"Soap, Bar",928.2,29,30.0%
+Enniskillen,"Soap, Liquid",1209,35,39.0%
+Great Yarmouth,Hand Sanitiser,1151.87,2,34.0%
+Great Yarmouth,"Soap, Bar",1023.75,27,30.0%
+Great Yarmouth,"Soap, Liquid",1189.5,36,35.0%
+Guernsey,Hand Sanitiser,263.35,46,7.0%
+Guernsey,"Soap, Bar",1701.7,14,44.0%
+Guernsey,"Soap, Liquid",1885,19,49.0%
+Haverfordwest,Hand Sanitiser,721.35,17.5,27%
+Haverfordwest,"Soap, Bar",191.1,48,7%
+Haverfordwest,"Soap, Liquid",1781,26,66%
+Helmsley,Hand Sanitiser,774.02,16,24.0%
+Helmsley,"Soap, Bar",586.95,43,19.0%
+Helmsley,"Soap, Liquid",1800.5,24,57.0%
+Holbeach,Hand Sanitiser,1307.59,1,38%
+Holbeach,"Soap, Bar",1797.25,9,53%
+Holbeach,"Soap, Liquid",312,46,9%
+Holsworthy,Hand Sanitiser,329.76,42,8.0%
+Holsworthy,"Soap, Bar",1742.65,11,42.0%
+Holsworthy,"Soap, Liquid",2112.5,15,50.0%
+Huddersfield,Hand Sanitiser,872.49,10,44.0%
+Huddersfield,"Soap, Bar",928.2,28,47.0%
+Huddersfield,"Soap, Liquid",162.5,47,8.0%
+Insch,Hand Sanitiser,272.51,44.5,7%
+Insch,"Soap, Bar",850.85,36,21%
+Insch,"Soap, Liquid",2996.5,3,73%
+Inveraray,Hand Sanitiser,439.68,34,15.00%
+Inveraray,"Soap, Bar",409.5,47,14.00%
+Inveraray,"Soap, Liquid",2008.5,16,70.00%
+Inverurie,Hand Sanitiser,277.09,43,8%
+Inverurie,"Soap, Bar",1774.5,10,52%
+Inverurie,"Soap, Liquid",1358.5,33,40%
+Kettering,Hand Sanitiser,579.37,25,13.0%
+Kettering,"Soap, Bar",878.15,35,20.0%
+Kettering,"Soap, Liquid",2840.5,4,66.0%
+Kings Lynn,Hand Sanitiser,664.1,21,21.0%
+Kings Lynn,"Soap, Bar",882.7,33.5,27.0%
+Kings Lynn,"Soap, Liquid",1677,28.5,52.0%
+Knighton,Hand Sanitiser,858.75,11,20%
+Knighton,"Soap, Bar",1706.25,13,40%
+Knighton,"Soap, Liquid",1709.5,27,40%
+Lowestoft,Hand Sanitiser,444.26,33,9%
+Lowestoft,"Soap, Bar",1897.35,6,37%
+Lowestoft,"Soap, Liquid",2756,5,54%
+Lydney,Hand Sanitiser,180.91,48,4%
+Lydney,"Soap, Bar",1642.55,16,41%
+Lydney,"Soap, Liquid",2216.5,14,55%
+Maidstone,Hand Sanitiser,657.23,22,19.0%
+Maidstone,"Soap, Bar",887.25,32,26.0%
+Maidstone,"Soap, Liquid",1833,22.5,54.0%
+Manchester,Hand Sanitiser,620.59,23,14%
+Manchester,"Soap, Bar",2083.9,4,48%
+Manchester,"Soap, Liquid",1677,28.5,38%
+Market Weighton,Hand Sanitiser,272.51,44.5,7%
+Market Weighton,"Soap, Bar",2479.75,2,64%
+Market Weighton,"Soap, Liquid",1137.5,37,29%
+Matlock,Hand Sanitiser,698.45,20,23.0%
+Matlock,"Soap, Bar",1715.35,12,56.0%
+Matlock,"Soap, Liquid",650,43,21.0%
+Merthyr Tydfil,Hand Sanitiser,519.83,28,13.0%
+Merthyr Tydfil,"Soap, Bar",832.65,37,21.0%
+Merthyr Tydfil,"Soap, Liquid",2658.5,6,66.0%
+Millom,Hand Sanitiser,826.69,13,26%
+Millom,"Soap, Bar",514.15,44,16%
+Millom,"Soap, Liquid",1839.5,21,58%
+Newton Stewart,Hand Sanitiser,1133.55,3,42%
+Newton Stewart,"Soap, Bar",1556.1,17,58%
+Newton Stewart,"Soap, Liquid",6.5,48,0%
+Rugby,Hand Sanitiser,496.93,29,13%
+Rugby,"Soap, Bar",1396.85,20,36%
+Rugby,"Soap, Liquid",1963,17,51%
+Sanquhar,Hand Sanitiser,345.79,40,8.0%
+Sanquhar,"Soap, Bar",723.45,40,16.0%
+Sanquhar,"Soap, Liquid",3328,2,76.0%
+St Andrews,Hand Sanitiser,881.65,9,24.0%
+St Andrews,"Soap, Bar",800.8,39,22.0%
+St Andrews,"Soap, Liquid",1924,18,53.0%
+St Austell,Hand Sanitiser,474.03,30,16.0%
+St Austell,"Soap, Bar",659.75,42,23.0%
+St Austell,"Soap, Liquid",1794,25,61.0%
+St Helens,Hand Sanitiser,588.53,24,15%
+St Helens,"Soap, Bar",1092,26,28%
+St Helens,"Soap, Liquid",2275,11,58%
+Sunderland,Hand Sanitiser,348.08,39,8%
+Sunderland,"Soap, Bar",1801.8,8,41%
+Sunderland,"Soap, Liquid",2236,12,51%
+Thornhill,Hand Sanitiser,721.35,17.5,18.0%
+Thornhill,"Soap, Bar",805.35,38,20.0%
+Thornhill,"Soap, Liquid",2580.5,8,63.0%
+Thurso,Hand Sanitiser,373.27,37,11.0%
+Thurso,"Soap, Bar",1474.2,18,43.0%
+Thurso,"Soap, Liquid",1547,31,46.0%
+Tongue,Hand Sanitiser,822.11,14,21.0%
+Tongue,"Soap, Bar",923.65,30,23.0%
+Tongue,"Soap, Liquid",2223,13,56.0%
+Ullapool,Hand Sanitiser,464.87,32,15%
+Ullapool,"Soap, Bar",905.45,31,30%
+Ullapool,"Soap, Liquid",1644.5,30,55%
+Wetherby,Hand Sanitiser,1003.02,6,27.0%
+Wetherby,"Soap, Bar",1183,24,32.0%
+Wetherby,"Soap, Liquid",1469,32,40.0%
+Worthing,Hand Sanitiser,334.34,41,10%
+Worthing,"Soap, Bar",2020.2,5,58%
+Worthing,"Soap, Liquid",1131,38,32%
+Wrexham,Hand Sanitiser,545.02,26,16.0%
+Wrexham,"Soap, Bar",2129.4,3,64.0%
+Wrexham,"Soap, Liquid",663,42,20.0%

@@ -1,0 +1,172 @@
+---
+title: "week 9 - solutions"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(scales)
+library(data.table)
+
+customer_information <- read_excel('data.xlsx', sheet = 'customer_information')
+```
+</div>
+*1*. Split the values and reshape the data so there is a separate ID on each row
+<div class="fold h">
+```{r}
+# Use separate_rows in tidyr, each ID is separated by a space
+```
+</div>
+ 
+<div class="fold s">
+```{r}
+customer_information_q1 <- customer_information %>% 
+  separate_rows(IDs, sep = ' ')
+```
+</div>
+
+*2*. Extract the information from the ID field
+<div class="fold h">
+```{r}
+# There's a couple of ways to do this looking at the number of characters with substr or using regex. If you can't do this step use the code and try the rest of the questions.
+```
+</div>
+
+<div class="fold s">
+```{r}
+customer_information_q2 <- customer_information_q1 %>% 
+  mutate(phone_number = str_extract(IDs, "\\d{6}"),  # 6 digits in a row
+         area_code = str_extract(IDs,  "\\b[^,][0-9]"),
+         area_letter = substr(str_extract(IDs,  "\\b[^,][0-9][A-Z]"), 3, 3),
+         products_ordered = str_extract(IDs,  "\\d{1,4}-"),
+         products_ordered = as.numeric(str_remove(products_ordered, "-")),
+         product_id_code = str_extract(IDs,  "\\-[A-Za-z]*"),
+         product_id_code = str_remove(product_id_code, "-")) %>% 
+  select(phone_number, area_code, area_letter, products_ordered, product_id_code)
+```
+</div>
+*3*. Input the area code lookup table - join to customer information table
+
+<div class="fold h z">
+```{r}
+# When you want the first or last of a string you can use substr() which will return the characters using their position in the string. 
+
+example <- "all_response_media"
+
+substr(example, 1, 3)
+
+# Look at using nchar which gets the number of characters in the string when trying to get the last n characters.
+
+substr(example, nchar(example) - 4, nchar(example))
+
+# After this you can use inner_join
+```
+</div>
+
+
+<div class="fold s">
+```{r}
+area_code_lookup <- read_excel('data.xlsx', sheet = 'area_code_lookup')
+
+area_code_lookup_q3 <- area_code_lookup %>% 
+  mutate(last_two_characters = substr(Code, (nchar(Code) - 1), nchar(Code)),
+         first_character_area = substr(Area, 1, 1))
+
+dat_q3 <- inner_join(customer_information_q2, area_code_lookup_q3, by = c("area_code" = "last_two_characters", "area_letter" = "first_character_area"))
+```
+</div>
+
+*4*. Exclude Clevedon, Fakenham and Stornoway
+<div class="fold s">
+```{r}
+dat_q4 <- filter(dat_q3, !Area %in% c('Clevedon', 'Fakenham', 'Stornoway'))
+```
+</div>
+
+*5*. Exclude any phone number with duplicated products
+<div class="fold h">
+```{r}
+# group_by the phone number and then remove cases where there is more than one record
+```
+</div>
+
+<div class="fold s">
+```{r}
+dat_q5 <- dat_q4 %>% 
+  group_by(phone_number) %>% 
+  filter(n() <= 1)
+```
+</div>
+
+*6*. Remove any unwanted fields (not needed)
+
+*7*. Join dataset to product lookup table
+<div class="fold s">
+```{r}
+product_lookup <- read_excel('data.xlsx', sheet = 'product_lookup')
+
+dat_q7 <- inner_join(dat_q5, product_lookup, by = c('product_id_code' = 'Product ID'))
+```
+</div>
+
+*8*. For each area and product, find the total sales values, rounded to zero decimal places 
+<div class="fold s">
+```{r}
+dat_q8 <- dat_q7 %>% 
+  ungroup() %>% 
+  group_by(Area, `Product Name`) %>% 
+  summarise(total_sales = sum(Price * products_ordered))
+```
+</div>
+*9*. Rank how well each product sold in each area
+<div class="fold h">
+```{r}
+# Use rank in desc order on total_sales
+```
+</div>
+
+<div class="fold s">
+```{r}
+dat_q9 <- dat_q8 %>% 
+  ungroup() %>% 
+  group_by(`Product Name`) %>% 
+  mutate(rank = rank(desc(total_sales)))
+```
+</div>
+*10*. For each area, work out the percent of total that each different product contributes to the overall revenue of that Area, rounded to 2 decimal places
+<div class="fold h">
+```{r}
+# In the scales package you can use percent to convert the proportion in to a percentage. 
+
+# Use round to round the proportion
+```
+</div>
+<div class="fold s">
+```{r}
+dat_q10 <- dat_q9 %>% 
+  ungroup() %>% 
+  group_by(Area) %>% 
+  mutate(percentage_of_total_revenue = percent(round(total_sales/sum(total_sales), 2)))
+```
+</div>
+*11*. Output the data
+<div class="fold s">
+```{r}
+fwrite(dat_q10, file = 'correct-output.csv')
+```
+</div>

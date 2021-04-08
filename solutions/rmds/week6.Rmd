@@ -1,0 +1,88 @@
+---
+title: "week 6 - solutions"
+author: "Scott Gee"
+date: "26/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+Load libraries and read in data
+
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(data.table)
+
+dat <- read_excel('data.xlsx')
+
+#remove dollar sign
+dat <- dat %>% 
+  mutate(MONEY = str_remove_all(MONEY, "[^0-9]"),
+         MONEY = as.integer(MONEY))
+```
+</div>
+
+*1*. Answer questions in one pipe. Also answer *2* here
+<div class="fold s">
+```{r total-tour-money}
+dat_q1 <- dat %>% 
+  mutate(overall_rank = rank(desc(MONEY))) %>% 
+  group_by(TOUR) %>% 
+  mutate(tour_rank = rank(desc(MONEY))) %>%  
+  summarise(total_prize_money = sum(MONEY),
+            total_player = n(),
+            total_events = sum(EVENTS),
+            average_prize_money = sum(MONEY)/sum(EVENTS),
+            average_ranking = mean(overall_rank - tour_rank)) 
+  
+```
+</div>
+*3*. Pivot the data
+<div class="fold s">
+```{r}
+dat_q3 <- dat_q1 %>% 
+  pivot_longer(-TOUR) %>% 
+  pivot_wider(names_from = TOUR, values_from = value) 
+```
+</div>
+*4*. Difference between tours
+<div class="fold s">
+```{r}
+dat_q4 <- dat_q3 %>% 
+  mutate(difference = LPGA - PGA) %>% 
+  rename(Measure = name)
+```
+</div>
+*5*. Output
+<div class="fold s">
+```{r}
+fwrite(dat_q4, 'correct-output.csv')
+```
+</div>
+
+One pipe solution 
+<div class="fold s">
+```{r}
+dat %>% 
+  mutate(overall_rank = rank(desc(MONEY))) %>% 
+  group_by(TOUR) %>% 
+  mutate(tour_rank = rank(desc(MONEY))) %>%  
+  summarise(total_prize_money = sum(MONEY),
+            total_player = n(),
+            total_events = sum(EVENTS),
+            average_prize_money = sum(MONEY)/sum(EVENTS),
+            average_ranking = mean(overall_rank - tour_rank)) %>% 
+  pivot_longer(-TOUR) %>% 
+  pivot_wider(names_from = TOUR, values_from = value) %>% 
+  mutate(difference = LPGA - PGA) %>% 
+  rename(Measure = name)
+```
+</div>
+

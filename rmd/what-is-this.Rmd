@@ -1,0 +1,36 @@
+---
+title: "what is this"
+author: "Scott Gee"
+date: "29/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+This group of exercises come from the preppin' data [site](https://preppindata.blogspot.com/). There are new exercises every week for manipulating data in different ways. This is meant to be done in Tableau but there is no reason why we can't apply the questions to R. 
+
+Note that sometimes the questions will use Tableau specific commands but you'll need to do this in R.
+
+Each folder has the task, an overview on how to solve the problems and the correct output that you need to create. There are also solutions in a separate folder with some hints if needed. If you can't do a specific question look at the solution for it and then use this for the following questions.
+
+The first 4 weeks are more beginner-focused and then the following weeks get more challenging. Below is a description on each week :
+
+- Week 1: Splitting columns on separators, cleaning up columns, adding new date columns, filtering out rows
+- Week 2: Extracting characters from strings, grouping by columns and calculations
+- Week 3: Pivoting data with `pivot_longer`/`pivot_wider`, renaming columns, grouping and summarising
+- Week 4:  Pivoting data with `pivot_longer`/`pivot_wider`, renaming columns, grouping, summarising and joining
+- Week 5: Filtering and joining 
+- Week 6: Creating new columns, grouping and pivoting
+- Week 7: Manipulating strings, searching strings 
+- Week 8: Adding columns, rolling joins with `data.table` 
+- Week 9: Lots of manipulating strings, separating rows and joins, use hints in overview if needed 
+- Week 10: Removing duplicates, joining
+- Week 11: Separating rows and columns, joining, grouping, summarising 
+- Week 12: Pivoting, filtering, joining, summarising 
+
+Hopefully you can use these exercises to learn some new things with R including pivoting, iteration and string manipulation

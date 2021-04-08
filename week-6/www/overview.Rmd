@@ -1,0 +1,36 @@
+---
+title: "week 6 - overview"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+<script src="www/hideOutput.js"></script>
+
+For this week, the main thing you'll need to use are `mutate`, `group_by`, `summarise` and the pivot functions, `pivot_wider' and `pivot_longer`.
+
+When getting the rankings of earnings, you need to get the overall rank and the specific tour rank like:
+
+```{r, eval=FALSE}
+dataframe %>% 
+  mutate(overall_rank = rank(desc(earnings_column))) %>% 
+  group_by(tour_column) %>% 
+  mutate(tour_rank = rank(desc(earnings_column)))
+```
+
+After you have done the calculations you need to pivot the data in to the required format. I think this is easiest by first pivoting from wide to long and then from long to wide again like
+
+```{r, eval=FALSE}
+calculation_dataframe %>% 
+  pivot_longer(-tour_column) %>% 
+  pivot_wider(names_From = tour_column, values_from = value)
+```
+

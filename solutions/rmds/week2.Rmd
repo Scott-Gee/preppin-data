@@ -1,0 +1,106 @@
+---
+title: "week 2 - solutions"
+author: "Scott Gee"
+date: "22/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data
+<div class="fold s">
+```{r load-libraries, message=FALSE,warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(writexl)
+
+dat <- read_excel('data.xlsx')
+```
+</div>
+*1*. Clean up the `model` field to leave only the letters
+<div class="fold s">
+```{r clean-model-field}
+dat_q1 <- mutate(dat, Brand = str_extract(Model, "[aA-zZ]+"))
+```
+</div>
+*2*. Work out order value 
+<div class="fold s">
+```{r order-value}
+dat_q2 <- mutate(dat_q1, order_value = Quantity * `Value per Bike`)
+```
+</div>
+*3*. Aggregate quantity sold, order value, average value by brand and bike type 
+<div class="fold s">
+```{r aggregate-1}
+dat_q3 <- dat_q2 %>% 
+  group_by(`Bike Type`, Brand) %>% 
+  summarise(quantity_sold = sum(Quantity), 
+            order_value = sum(order_value),
+            average_value = mean(sum(order_value)/sum(Quantity)))
+```
+</div>
+*4*. Calculate days to ship
+<div class="fold s">
+```{r days-to-ship}
+dat_q4 <- dat_q2 %>% 
+  mutate(days_to_ship = `Shipping Date`- `Order Date`)
+```
+</div>
+*5*. Aggregate order value, quantity sold and average days to ship by brand and store
+<div class="fold s">
+```{r aggregate-2}
+dat_q5 <- dat_q4 %>% 
+  group_by(Brand, Store) %>% 
+  summarise(quantity_sold = sum(Quantity), 
+            order_value = sum(order_value),
+            average_shipping_time = as.numeric(mean(days_to_ship)))
+```
+</div>
+
+*6*. Round to 1 decimal place
+<div class="fold s">
+```{r round}
+dat_q6_1 <- mutate(dat_q5, across(where(is.numeric), round, 1))
+
+dat_q6_2 <- mutate(dat_q3, across(where(is.numeric), round, 1))
+```
+</div>
+*7*. Output
+<div class="fold s">
+```{r export}
+export_data <- list(dat_q6_1, dat_q6_2)
+
+write_xlsx(export_data, path = 'correct-output.xlsx', format_headers = FALSE)
+```
+</div>
+Both of these could be written within one pipe by chaining the statements.
+<div class="fold s">
+```{r one-pipe}
+dat %>% 
+  mutate(Brand = str_extract(Model, "[aA-zZ]+"),
+         order_value = Quantity * `Value per Bike`) %>% 
+  group_by(`Bike Type`, Brand) %>% 
+  summarise(quantity_sold = sum(Quantity), 
+            order_value = sum(order_value),
+            average_value = mean(sum(order_value)/sum(Quantity))) %>% 
+  mutate(across(where(is.numeric), round, 1)) %>% 
+  head()
+
+dat %>% 
+  mutate(Brand = str_extract(Model, "[aA-zZ]+"),
+         order_value = Quantity * `Value per Bike`,
+         days_to_ship = `Shipping Date`- `Order Date`) %>% 
+  group_by(Brand, Store) %>% 
+  summarise(quantity_sold = sum(Quantity), 
+            order_value = sum(order_value),
+            average_shipping_time = as.numeric(mean(days_to_ship))) %>% 
+   mutate(across(where(is.numeric), round, 1)) %>% 
+  head()
+  
+```
+</div>

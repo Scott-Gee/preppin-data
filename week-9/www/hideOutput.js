@@ -1,0 +1,46 @@
+$(document).ready(function() {
+
+  $chunks = $('.fold');
+
+  $chunks.each(function () {
+
+    // add button to source code chunks
+    if ( $(this).hasClass('s') ) {
+      $('pre.r', this).prepend("<div class=\"showopt\">Show Code</div><br style=\"line-height:22px;\"/>");
+      $('pre.r', this).children('code').attr('class', 'folded');
+    }
+
+    if ( $(this).hasClass('h') ) {
+      $('pre.r', this).prepend("<div class=\"showopt\">Show Hint</div><br style=\"line-height:22px;\"/>");
+      $('pre.r', this).children('code').attr('class', 'folded');
+    }
+
+    // add button to output chunks
+    if ( $(this).hasClass('o') ) {
+      $('pre:not(.r)', this).has('code').prepend("<div class=\"showopt\">Show Output</div><br style=\"line-height:22px;\"/>");
+      $('pre:not(.r)', this).children('code:not(r)').addClass('folded');
+    }
+
+    if ( $(this).hasClass('z') ) {
+      $('pre:not(.r)', this).has('code').prepend("<div class=\"showopt\">Hint Output</div><br style=\"line-height:25px;\"/>");
+      $('pre:not(.r)', this).children('code:not(r)').addClass('folded');
+    }
+  });
+
+  // hide all chunks when document is loaded
+  $('.folded').css('display', 'none')
+
+  // function to toggle the visibility
+  $('.showopt').click(function() {
+    var label = $(this).html();
+    if (label.indexOf("Show") >= 0) {
+      $(this).html(label.replace("Show", "Hide"));
+    } else {
+      $(this).html(label.replace("Hide", "Show"));
+    }
+    $(this).siblings('code, img').slideToggle('fast', 'swing');
+  });
+  
+    $('#header').parent().prepend('<div id=\"logo\"><img src=\"www/arm-logo.png"\ style=\"position:absolute; top:0; right:0; padding:20px; height:145px\"></div>');
+  $('#header').css('margin-right', '120px')
+});

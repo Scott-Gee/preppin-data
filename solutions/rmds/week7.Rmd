@@ -1,0 +1,119 @@
+---
+title: "week 7 - solutions"
+author: "Scott Gee"
+date: "26/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+This is a lot harder than previous ones so may be worth using the hint code to see if you can get there
+
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(glue)
+
+keyword <- read_excel('data.xlsx', sheet = 'keywords')
+```
+</div>
+
+<div class="fold s o">
+*1*. Prepare the `keyword` data
+```{r}
+e_numbers <- keyword %>% 
+  select(`E Numbers`) %>%
+  separate_rows(`E Numbers`, sep = ', ') %>% 
+  mutate(`E Numbers` = glue("E{`E Numbers`}")) %>% 
+  transmute(product_name = `E Numbers`)
+
+animal_ingredients <- keyword %>% 
+  select(`Animal Ingredients`) %>%
+  separate_rows(`Animal Ingredients`, sep = ', ') %>% 
+  transmute(product_name = `Animal Ingredients`)
+
+keywords_rows <- rbind(e_numbers, animal_ingredients) 
+
+keywords_rows
+```
+</div>
+*2*. Check whether each product contains any non-vegan products.
+
+<div class="fold h z">
+```{r}
+
+# Hint: For the `stringr` package, you can search for a list of words using an OR condition by separating the strings with a `|`. If you split the keywords in to one list with #`unlist`, you can use the `paste0` function with the `collapse argument` to create a string with `|`separating each keyword.
+
+keywords_list_regex <- paste0(unlist(keywords_rows), collapse = '|') 
+keywords_list_regex
+```
+</div>
+
+<div class="fold s">
+```{r}
+shopping_list <- read_excel('data.xlsx', sheet = 'shopping_list')
+
+shopping_list_q2 <-  mutate(shopping_list, vegan = str_detect(`Ingredients/Allergens`, keywords_list_regex))
+```
+</div>
+*3*. Prepare a final shopping list of vegan products
+
+<div class="fold s">
+```{r}
+shopping_list_q3 <- shopping_list_q2 %>% 
+  filter(vegan == TRUE) %>% 
+  select(Product, Description)
+```
+</div>
+*4*. Prepare a list explaining why other products aren't vegan
+
+<div class="fold h z">
+```{r}
+# Hint: You'll need to create a list of strings from the `keywords` using `pull` from the `dplyr` package. 
+#       When trying to create the comma separated list, you may need to loop through and test each word at a time
+
+#Get the keywords as a list of strings and name each string 
+keywords_list <- pull(keywords_rows) %>% 
+  set_names()
+  
+shopping_list_q4 <- shopping_list %>% 
+  # Loop through each keyword and test whether it appears in the ingredients/allergens column. Using map_df will convert this in to a dataframe and append it to the current one
+  mutate(map_df(keywords_list, ~ str_detect(`Ingredients/Allergens`, .x)))
+
+shopping_list_q4
+```
+</div>
+
+<div class="fold s">
+```{r}
+shopping_list_q4_final <- shopping_list_q4 %>%
+  # Pivot the column from wide to long so that the matches can be filtered out
+  pivot_longer(E120:Beeswax) %>% 
+  # Return only the matched products
+  filter(value == TRUE) %>% 
+  group_by(Product) %>% 
+  # For each products, create a comma separated list of the matched ingredients
+  mutate(Contains = glue_collapse(name, sep = ',')) %>% 
+  select(Product, Description, Contains) %>% 
+  # Remove the duplicate columns
+  distinct()
+```
+</div>
+
+*5*. Output 
+<div class="fold s">
+```{r}
+export <- list(shopping_list_q3, shopping_list_q4_final)
+
+write_xlsx(export, path = 'correct-output.xlsx')
+```
+</div>

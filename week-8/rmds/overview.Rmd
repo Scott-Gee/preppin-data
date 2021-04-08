@@ -1,0 +1,26 @@
+---
+title: "week 8 - overview"
+author: "Scott Gee"
+date: "29/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+This is again quite a bit harder than previous week. 
+
+There are hints within the solutions that you can look at.
+
+
+For the final part a rolling join needs to be done (join to nearest value). This is not possible in the `tidyverse` R packages. Instead data.table will be used. Data.table is a different syntax to write code but is really fast and memory efficient. 
+
+Have a look at some guides on how to use data.table [here](https://atrebas.github.io/post/2020-06-17-datatable-introduction/) 
+
+For the specific rolling join tutorial use [this](https://www.gormanalysis.com/blog/r-data-table-rolling-joins/)
+

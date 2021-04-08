@@ -1,0 +1,23 @@
+---
+title: "overview"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+
+For the first week you'll need to be able to:
+
+- read data in with the `readxl` package
+- split a column on a separator with the [`separate`](https://tidyr.tidyverse.org/reference/separate.html) function 
+- clean up a column with [`case_when`](https://dplyr.tidyverse.org/reference/case_when.html) and [`str_starts`](rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_starts)
+- The `quarter` and 'day' functions in `lubridate`
+- Output this as a CSV

@@ -1,0 +1,31 @@
+---
+title: "week 3 - overview"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+This week is again mostly calculations that can be done with `dplyr`.
+
+One tricky thing to do in R is to read in multiple sheets from an excel workbook at the same time. 
+
+The code below can do this:
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+
+sheet_names <- excel_sheets('data.xlsx') # get the sheet names of the file
+
+sheet_names <- set_names(sheet_names, sheet_names) #name each object in the list with its name (helps for map_df)
+
+dat <- map_df(sheet_names, ~ read_excel('data.xlsx', sheet = .x), .id = 'store') # read in each sheet using the sheet name and then bind in to one data frame, creating the store column which will use the name of the sheet
+```
+
+After this you'll need to use `rename`, `group_by`, `mutate` and `summarise` from the `dplyr` package and the lubridate package for the date formatting.

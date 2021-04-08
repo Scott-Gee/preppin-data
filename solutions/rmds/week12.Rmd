@@ -1,0 +1,110 @@
+---
+title: "week 12 - solutions"
+author: "Scott Gee"
+date: "01/04/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(data.table)
+
+dat <- read_excel('data.xlsx')
+
+```
+</div>
+*1*. Pivot all of the month fields in to a single column (can ignore warnings, these are coming as there are months with NAs)
+<div class="fold h">
+```{r, eval=FALSE}
+# You'll need to make the columns that you want to pivot the same type (numeric), this can be done with the below
+
+dat %>% 
+  replace(is.na(.), NA_integer_) %>% 
+  mutate(across(starts_with('01'), as.numeric)) 
+```
+</div>
+<div class="fold s">
+```{r, warning=FALSE}
+dat_q1 <- dat %>% 
+  replace(is.na(.), NA_integer_) %>% 
+  mutate(across(starts_with('01'), as.numeric)) %>% 
+  pivot_longer(`01-01-10`:`01-12-20`)
+```
+</div>
+
+*2*. Filter out the nulls
+<div class="fold s">
+```{r}
+dat_q2 <- filter(dat_q1, !is.na(value))
+```
+</div>
+*3*. Filter to only include values that unit value is number of tourists
+<div class="fold s">
+```{r}
+dat_q3 <- filter(dat_q2, `Unit-Detail` == 'Tourists')
+```
+</div>
+*4*. Get the number of tourists from each country for each month. If you have the continent but not the country, albel the country as *Unknown*.
+<div class="fold h">
+```{r}
+# Remove all measures that are not tourist arrivals (look at hierarchy breakdown column)
+# Create a country/origin and continent column using the hierarchy breakdown column
+# Create two separate dataframes, one where you know the country and one where you don't, with arrivals by continent. 
+# Bind the unknown country dataframe with a dataframe that is the monthly arrivals by country with continent included as a column
+```
+</div>
+<div class="fold s">
+```{r}
+dat_q4 <- dat_q3 %>% 
+  filter(str_detect(`Hierarchy-Breakdown`, 'Tourist arrivals')) %>% 
+  mutate(origin = str_remove(`Series-Measure`, 'Tourist arrivals from '),
+         continent = if_else(str_remove(`Hierarchy-Breakdown`, 'Real Sector / Tourism / Tourist arrivals / ') == 'Real Sector / Tourism / Tourist arrivals',
+                             origin,
+                             str_remove(`Hierarchy-Breakdown`, 'Real Sector / Tourism / Tourist arrivals / '))) %>% 
+  select(origin, continent, name, value) 
+
+total_known_country <- dat_q4 %>% 
+  filter(origin != continent) %>% 
+  group_by(continent, name) %>% 
+  summarise(known = sum(value)) 
+
+total_unknown_country <- dat_q4 %>% 
+  filter(origin == continent) %>% 
+  select(continent, name, value) %>% 
+  rename(total = value)
+
+unknown_country <- left_join(total_unknown_country, total_known_country, by = c("continent", "name")) %>% 
+  mutate(value = total - known) %>% 
+  select(continent, name, value) %>% 
+  mutate(country = 'Unknown')
+
+dat_q4_final <- dat_q4 %>% 
+  filter(origin != continent) %>% 
+  rename(country = origin) %>% 
+  rbind(unknown_country) %>% 
+  rename(Breakdown = continent,
+         `Number of Tourists` = value,
+         Month = name,
+         Country = country) %>% 
+  select(Breakdown, `Number of Tourists`, Month, Country) 
+
+```
+</div>
+
+*5*. Output
+<div class="fold s">
+```{r}
+fwrite(dat_q4_final, 'correct-output.csv')
+```
+</div>

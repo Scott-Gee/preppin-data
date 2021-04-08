@@ -1,0 +1,57 @@
+---
+title: "week 9 - overview"
+author: "Scott Gee"
+date: "31/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+There's some pretty heavy string manipulation in this exercise. It's helpful to know how to extract digits from strings or things before and after characters. To look at an intro for strings in R look [here](https://r4ds.had.co.nz/strings.html)
+
+You'll also need to extract the first/last n characters of a string, this example using `substr` may help:
+
+```{r}
+example <- "all_response_media"
+
+substr(example, 1, 3)
+
+# Look at using nchar which gets the number of characters in the string when trying to get the last n characters.
+
+substr(example, nchar(example) - 4, nchar(example))
+```
+
+If you're struggling with the initial data clean with the strings use this code and then you can answer the rest of the questons.
+
+
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+
+customer_information <- read_excel('data.xlsx', sheet = 'customer_information') %>% 
+  separate_rows(IDs, sep = ' ') %>% 
+  mutate(phone_number = str_extract(IDs, "\\d{6}"),  # 6 digits in a row
+         area_code = str_extract(IDs,  "\\b[^,][0-9]"),
+         area_letter = substr(str_extract(IDs,  "\\b[^,][0-9][A-Z]"), 3, 3),
+         products_ordered = str_extract(IDs,  "\\d{1,4}-"),
+         products_ordered = as.numeric(str_remove(products_ordered, "-")),
+         product_id_code = str_extract(IDs,  "\\-[A-Za-z]*"),
+         product_id_code = str_remove(product_id_code, "-")) %>% 
+  select(phone_number, area_code, area_letter, products_ordered, product_id_code)
+```
+</div>
+
+Apart from this, this exercise feels like a good opportunity to start linking `dplyr` functions with the pipe %>%.
+
+To check for duplicates, `group_by` the variable that might be duplicated then you can check how many times it occurs in the data with either `mutate(count = n())` and then `filter` those with multiple occurences or `filter(n() <= 1)`
+
+Remember you can `group_by`, `summarise`, `ungroup` and then `group_by` another variable.
+
+Look at using the `percent` function from the `scales` package to turn a proportion in to a percentage

@@ -1,0 +1,89 @@
+---
+title: "week 1 - solutions"
+author: "Scott Gee"
+date: "22/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data
+<div class="fold s">
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(lubridate)
+
+dat <- read_excel('data.xlsx')
+```
+</div>
+
+*1*. Split store and bike
+<div class="fold s o">
+```{r split-store-bike}
+dat_q1 <- separate(dat, `Store - Bike`, into = c('Store', 'Bike'), sep = ' - ') 
+  
+head(dat_q1)
+```
+</div>
+*2*. Clean up the `Bike` field
+<div class="fold s o">
+```{r clean-bike-field}
+dat_q2 <- dat_q1 %>% 
+  mutate(Bike = case_when(str_starts(Bike, 'Ro') == TRUE ~ 'Road',
+                          str_starts(Bike, 'Mount') == TRUE ~ 'Mountain',
+                          str_starts(Bike, 'Grav') == TRUE ~ 'Gravel',
+                          TRUE ~ 'OTHER'))
+
+head(dat_q2)
+
+```
+</div>
+*3*. Create two different date fields, `quarter` and `day of month`
+<div class="fold s o">
+```{r create-data-fields}
+dat_q3 <- dat_q2 %>% 
+  mutate(quarter = quarter(Date),
+         day_of_month = day(Date))
+
+head(dat_q3)
+```
+</div>
+*4*. Remove the first 10 orders
+<div class="fold s o">
+```{r remove-first-10}
+dat_q4 <- slice(dat_q3, -(1:10))
+
+head(dat_q4)
+```
+</div>
+*5*. Write data to csv file
+<div class="fold s o">
+```{r write-csv}
+data.table::fwrite(dat_q4, file = 'correct-output.csv')
+```
+</div>
+
+This could all be done in one piped call if intended
+<div class="fold s o">
+```{r one-pipe, eval=FALSE}
+dat %>% 
+  separate(`Store - Bike`, into = c('Store', 'Bike'), sep = ' - ') %>% 
+  mutate(Bike = case_when(str_starts(Bike, 'Ro') == TRUE ~ 'Road',
+                          str_starts(Bike, 'Mount') == TRUE ~ 'Mountain',
+                          str_starts(Bike, 'Grav') == TRUE ~ 'Gravel',
+                          TRUE ~ 'OTHER'),
+         quarter = quarter(Date),
+         day_of_month = day(Date)) %>% 
+  slice(-(1:10)) %>% 
+  data.table::fwrite(file = 'correct-output.csv')
+  
+   
+```
+</div>

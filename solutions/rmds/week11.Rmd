@@ -1,0 +1,92 @@
+---
+title: "week 11 - solutions"
+author: "Scott Gee"
+date: "01/04/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(data.table)
+
+cocktails <- read_excel('data.xlsx', sheet = 'cocktails')
+
+sourcing <- read_excel('data.xlsx', sheet = 'sourcing')
+
+conversion_rates <- read_excel('data.xlsx', sheet = 'conversion_rates')
+```
+</div>
+
+*1*. Split out the recipes in to the different ingredients and their measurements
+
+<div class="fold h">
+```{r}
+# Use separate_rows and separate
+```
+</div>
+<div class="fold s">
+```{r}
+cocktails_q1 <- cocktails %>% 
+  separate_rows(`Recipe (ml)`, sep = "; ") %>% 
+  separate(`Recipe (ml)`, into = c('Ingredient', 'Measure'), sep = ':') %>% 
+  mutate(Measure = as.numeric(str_remove(Measure, 'ml')))
+```
+
+</div>
+
+*2*. Calculate the price in pounds for the required measure of each ingredient (price per ml)
+<div class="fold s">
+```{r}
+sourcing_q2 <- inner_join(sourcing, conversion_rates) %>% 
+  mutate(pound_price = Price / `Conversion Rate £`,
+         price_per_ml = pound_price/`ml per Bottle`) %>% 
+  select(Ingredient, price_per_ml, pound_price)
+
+```
+</div>
+
+*3*. Join the ingredient costs to the cocktails
+<div class="fold s">
+```{r}
+cocktails_q3 <- inner_join(cocktails_q1, sourcing_q2)
+```
+</div>
+
+*4*. Find the total cost of each cocktail
+<div class="fold s">
+```{r}
+cocktails_q4 <- cocktails_q3 %>% 
+  mutate(ingredient_cost = Measure * price_per_ml) %>% 
+  group_by(Cocktail) %>% 
+  summarise(total_cost = sum(ingredient_cost))
+```
+</div>
+
+*5*. Include a field for profit margin
+<div class="fold s">
+```{r}
+cocktails_q5 <- inner_join(cocktails, cocktails_q4) %>% 
+  mutate(profit = `Price (£)` - total_cost) 
+```
+</div>
+
+*6*. Output
+<div class="fold s">
+```{r}
+cocktails_q6 <- select(cocktails_q5, -`Recipe (ml)`) 
+
+fwrite(cocktails_q6, file = 'correct-ouput.csv')
+```
+</div>

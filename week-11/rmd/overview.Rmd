@@ -1,0 +1,37 @@
+---
+title: "week 11 - overview"
+author: "Scott Gee"
+date: "01/04/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+For week 11, the most difficult thing is splitting out the cocktails recipes in to separate rows and splitting the ingredient and the measure in to separate columns.
+
+In R you can use `separate_rows` to split a column in to separate rows like the example below. You can also `separate` a column in to separate columns on a separator.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+example <- tibble(x = c(1,2), 
+                  y = c('a.b,d.c', 'e.d,f.g'))
+
+example 
+
+example_1 <- separate_rows(example, y, sep = ",") 
+
+example_1 
+
+example_2 <- separate(example_1, y, into = c('a','b'))
+
+example_2
+```
+
+After this you should be able to join the datasets together and create new columns with some basic calculations

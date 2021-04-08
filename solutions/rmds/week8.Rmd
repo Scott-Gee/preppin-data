@@ -1,0 +1,136 @@
+---
+title: "week 8 - solutions"
+author: "Scott Gee"
+date: "29/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(lubridate)
+library(glue)
+library(data.table)
+
+choices <- read_excel('data.xlsx', sheet = 'choices')
+
+customers <- read_excel('data.xlsx', sheet = 'customers')
+
+```
+</div>
+
+*1*. Calculate the time difference between songs
+
+<div class="fold h">
+```{r}
+# Make sure that your date column is in date format and then use the lag function from dplyr to access the date value from the row above
+```
+
+</div>
+<div class="fold s">
+```{r}
+choices_q1 <- mutate(choices, Date = mdy_hm(Date),
+                              time_diff = replace_na(as.numeric(Date - lag(Date, 1)), 0))
+```
+</div>
+*2*. Flag new session if the time between songs is greater than or equal to 59 minutes
+
+<div class="fold h">
+```{r}
+# You can use the calculation between songs and then if >= 59 then set to TRUE
+```
+</div>
+<div class="fold s">
+```{r}
+choices_q2 <- mutate(choices_q1,  new = replace_na(difftime(Date, lag(Date, 1)) >= 59, TRUE))
+```
+</div>
+*3*. Create a session number field
+<div class="fold h">
+```{r}
+# Use the cumsum function for new sessions
+```
+
+</div>
+<div class="fold s">
+```{r}
+choices_q3 <- mutate(choices_q2,  session = cumsum(new))
+```
+</div>
+*4*. Number the songs in order for each session
+<div class="fold h">
+```{r}
+# Group by the session and then use the rank function from dplyr
+```
+
+</div>
+<div class="fold s">
+```{r}
+choices_q4 <- choices_q3 %>% 
+  group_by(session) %>% 
+  mutate(song_number = rank(Date))
+```
+</div>
+*5* Match the customers to the correct session, based on their entry time
+<div class="fold h">
+```{r}
+# You''ll need to create a column in both dataframes with the datetime column that you want to join
+
+# Make both dataframes datatables with setDT() from data.table
+
+# Use setkey on the datetime columns you have created
+
+# Join the columns like customers_rolling_datatable[choices_rolling_datatable, roll = TRUE]
+```
+
+</div>
+<div class="fold s">
+```{r}
+customers_rolling_join <- customers %>% 
+  mutate(`Entry Time` = mdy_hm(`Entry Time`),
+         join_time = `Entry Time`) %>% 
+  setDT()
+
+choices_rolling_join <- choices_q4 %>% 
+  mutate(join_time = `Date`) %>% 
+  setDT()
+
+setkey(customers_rolling_join, join_time)
+setkey(choices_rolling_join, join_time)
+
+dat_q5 <- customers_rolling_join[choices_rolling_join, roll = TRUE][,join_time := NULL]
+
+```
+</div>
+*6*. Make customer ID field null if there were no customers who arrived 10 minutes before the session
+
+<div class="fold h">
+```{r}
+# Group by the session and get the minimum time, check whether the difference between the session start and entry time is more than 10 minutes and if so assign it as NA_character_
+```
+</div>
+<div class="fold s">
+```{r}
+dat_q6 <- dat_q5 %>% 
+  group_by(session) %>% 
+  mutate(session_start = min(Date),
+         session_entry_difference = as.numeric(difftime( session_start, `Entry Time`, unit = 'mins')),
+         `Customer ID` = if_else(session_entry_difference >= 10, NA_character_, `Customer ID`))
+```
+</div>
+*7*. Output data
+<div class="fold s">
+```{r}
+fwrite(dat_q6, file = 'correct-output.csv')
+```
+</div>

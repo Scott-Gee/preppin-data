@@ -1,0 +1,133 @@
+---
+title: "week4 - solutions"
+author: "Scott Gee"
+date: "23/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data.
+
+*1*. Bind data together with `map_df`
+<div class="fold s">
+```{r load-libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(lubridate)
+library(data.table)
+
+sheet_names <- excel_sheets('data.xlsx')[1:5]
+
+sheet_names <- set_names(sheet_names, sheet_names) #this ensures that we can use an id column as the store name
+
+dat <- map_df(sheet_names, ~ read_excel('data.xlsx', sheet = .x), .id = 'store')
+```
+</div>
+
+*2*. Pivot product columns
+<div class="fold h">
+```{r}
+# Use pivot_longer
+```
+</div>
+<div class="fold s">
+```{r pivot}
+dat_q2 <- pivot_longer(dat, `New - Saddles`:`Existing - Bags`)
+```
+</div>
+*3*. Split field with customer type and product and rename `value` column to products sold
+<div class="fold s">
+```{r split-field}
+dat_q3 <- separate(dat_q2, name, into = c('customer_type', 'product'), sep = ' - ')
+
+dat_q3 <- rename(dat_q3, products_sold = value)
+```
+</div>
+*4*. Turn the `date` into a `quarter`
+<div class="fold s">
+```{r date-quarter}
+dat_q4 <- mutate(dat_q3, quarter = quarter(Date))
+```
+</div>
+*5*. Sum up products sold by `store` and `quarter`
+<div class="fold s">
+```{r sum-products}
+dat_q5 <- dat_q4 %>% 
+  group_by(store, quarter) %>% 
+  summarise(products_sold = sum(products_sold))
+```
+</div>
+*6*. Add targets data
+<div class="fold s">
+```{r add-targets}
+targets <- read_excel('data.xlsx', sheet = 'Targets')
+```
+</div>
+*7*. Join `targets` data to aggregated stores data
+<div class="fold h">
+```{r}
+# Use inner_join
+```
+</div>
+<div class="fold s">
+```{r join, message=FALSE}
+dat_q7 <- inner_join(dat_q5, targets, by = c('store' = 'Store', 'quarter' = 'Quarter'))
+```
+</div>
+*8*. No need to remove duplicates
+
+*9*. Calculate variance between actual sales and target
+
+<div class="fold s">
+```{r calculate-variance, message=FALSE}
+dat_q9 <- mutate(dat_q7, variance_to_target = Target - products_sold)
+```
+</div>
+
+*10*. Rank the stores based on variance to target in each quarter
+<div class="fold h">
+```{r}
+# group_by the quarter and then use rank in desc order 
+```
+</div>
+<div class="fold s">
+```{r rank-stores}
+dat_q10 <- dat_q9 %>% 
+  group_by(quarter) %>% 
+  mutate(rank = rank(desc(variance_to_target)))
+```
+</div>
+
+*11*. Export data
+
+<div class="fold s">
+```{r export}
+fwrite(dat_q10, 'correct-output.csv')
+```
+</div>
+
+You could write this within one pipe call with the below:
+
+<div class="fold s">
+```{r one-pipe}
+one_pipe <- dat %>% 
+  pivot_longer(`New - Saddles`:`Existing - Bags`) %>% 
+  separate(name, into = c('customer_type', 'product'), sep = ' - ') %>% 
+  rename(products_sold = value) %>% 
+  mutate(quarter = quarter(Date)) %>% 
+  group_by(store, quarter) %>% 
+  summarise(products_sold = sum(products_sold)) %>% 
+  inner_join(targets, by = c('store' = 'Store', 'quarter' = 'Quarter')) %>% 
+  mutate(variance_to_target = Target - products_sold) %>% 
+  group_by(quarter) %>% 
+  mutate(rank = rank(desc(variance_to_target))) 
+    
+```
+</div>

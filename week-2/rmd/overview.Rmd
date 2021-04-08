@@ -1,0 +1,21 @@
+---
+title: "week 2 - overview"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+
+For this week there are lots of calculations to be done which can be done with `dplyr` and the `mutate`, `group_by` and `summarise` functions.
+
+Consider `group_by` to be the same as the SQL `GROUP BY`, `summarise` to be the same as `SUM` and `mutate` will create new columns from current columns in the dataframe.
+
+In question 1 you'll need to remove things from a string field. This can be done really efficiently by extracting the characters you want to keep with [`str_extract`](https://www.rdocumentation.org/packages/stringr/versions/1.4.0/topics/str_extract)
+
+Before outputting, you need to round all values to one decimal place. This can be done using `across` in `dplyr` like [this](https://dplyr.tidyverse.org/reference/across.html) tutorial (towards bottom of the page)

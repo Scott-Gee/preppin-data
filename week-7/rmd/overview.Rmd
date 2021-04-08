@@ -1,0 +1,35 @@
+---
+title: "week 7 - overview"
+author: "Scott Gee"
+date: "29/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<script src="www/hideOutput.js"></script>
+For this week, there's a lot of string manipulation which may be quite new to you.
+
+There's a guide on strings [here](https://r4ds.had.co.nz/strings.html)
+
+You'll need to convert a comma separated list in to a dataframe. It might be easier to split the `keywords` data in to the E numbers and animal ingredients part. `dplyr` has a function called `separate_rows` that will convert a separated list when you register the `sep` argument like `separate_rows(column, sep = " ,")`. After this you'll need to merge these two dataframes together.
+
+In question 2, you need to check whether each product contains any non-vegan products. After you get a list of the strings that contain animal products, look at this [post](https://stackoverflow.com/questions/35962426/multiple-strings-with-str-detect-r)
+
+For question 4 you need to create a column that is a comma separated list of the animal ingredients that are in a product. Use the below to get a list of the keywords with the names assigned to each keyword.
+
+```{r, eval=FALSE}
+#Get the keywords as a list of strings and name each string 
+keywords_list <- pull(keywords_rows) %>% 
+  set_names()
+```
+
+The next part is checking each string against the ingredients/allergens. The [`map`](https://r4ds.had.co.nz/iteration.html#the-map-functions) functions will be helpful for this, especially `map_df`. Something like this will work 
+
+`shopping_dataframe_name %>% 
+  mutate(map_df(keywords_list, ~ str_detect(ingredients_column, .x)))`
+  
+After this you'll want to pivot the data from wide to long with [`pivot_longer`](https://thatdatatho.com/tidyrs-pivot_longer-and-pivot_wider-examples-tidytuesday-challenge/), filter for only the TRUE columns, `group_by` the Product and then use `glue_collapse` to create the list.

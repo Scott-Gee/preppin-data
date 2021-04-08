@@ -1,0 +1,26 @@
+---
+title: "week 5 - overview"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+This week is more challenging than the recent 4 weeks and looks at updating old data and removing duplicates.
+
+When looking at this week, it may be helpful to use a bit of code like the below to get the latest version of something.
+
+```{r, eval=FALSE}
+dataframe %>% 
+  group_by(important_column) %>% 
+  filter(some_date = max(some_date))
+```
+
+I found it easiest to join the tables together with `inner_join` on specific columns and then removing the columns that weren't needed.

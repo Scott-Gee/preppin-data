@@ -1,0 +1,139 @@
+---
+title: "week 10 - solutions"
+author: "Scott Gee"
+date: "31/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+Load libraries and read in data
+<div class="fold s">
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+library(writexl)
+library(scales)
+library(data.table)
+library(janitor)
+
+pokemon <- read_excel('data.xlsx', sheet = 'pokemon')
+
+evolution <- read_excel('data.xlsx', sheet = 'evolution')
+```
+</div>
+*1*. Remove records with `Number` higher than 386 and those that start with Mega
+
+<div class="fold h">
+```{r}
+# You can use the str_starts function from stringr
+```
+</div>
+
+<div class="fold s">
+```{r}
+pokemon_q1 <- filter(pokemon, Number <= 386,
+                              !str_starts(Name, 'Mega'))
+```
+</div>
+
+*2*. Some Pokémon have more than one Type. We aren't interested in Types for this challenge so remove this field and ensure we have one row per Pokémon.
+<div class="fold h">
+```{r}
+# Use distinct
+```
+</div>
+<div class="fold s">
+```{r}
+pokemon_q2 <- pokemon_q1 %>% 
+  select(-Type) %>% 
+  distinct()
+```
+</div>
+*3*. Bring in information about what our Pokémon evolve to
+
+<div class="fold h">
+```{r}
+# Remove duplicates before joining with distinct
+```
+</div>
+<div class="fold s">
+```{r}
+evolution_q3 <- distinct(evolution)
+
+dat_q3 <- left_join(pokemon_q2, evolution_q3, by = c('Name' = 'Evolving from')) 
+
+```
+</div>
+
+*4*. Bring in information about what a Pokémon evolves from
+<div class="fold s">
+```{r}
+dat_q4 <- left_join(dat_q3, evolution_q3, by = c('Name' = 'Evolving to')) 
+```
+</div>
+*5*. Create an `evolution_group` column which shows the first evolution of a pokemon for each name.
+
+<div class="fold h">
+```{r}
+# Good luck
+```
+</div>
+<div class="fold s">
+```{r}
+original_name <- dat_q4 %>% 
+  select(Name, `Evolving to`, `Evolving from`)  %>% 
+  mutate(original = if_else(is.na(`Evolving from`) == TRUE, 1,0)) %>% 
+  filter(original == 1) %>% 
+  rename(original_name = Name) %>% 
+  select(original_name) 
+
+
+evolution_groups <- original_name  %>% 
+  left_join(dat_q4 %>% select(Name, `Evolving to`, `Evolving from`),
+            by = c('original_name' = 'Evolving from')) %>% 
+  mutate(evolution_group = original_name) %>% 
+  rename(evolution_1 = Name,
+         evolution2 = `Evolving to`) %>% 
+  pivot_longer(-evolution_group) %>% 
+  filter(!is.na(value)) %>% 
+  distinct() 
+
+dat_q5 <- left_join(dat_q4, evolution_groups, by = c('Name' = 'value')) %>% 
+  mutate(evolution_group = if_else(is.na(evolution_group) == TRUE, `Evolving from`, evolution_group))
+```
+</div>
+
+*6*. Some duplication may have occurred with all our joins, ensure no 2 rows are exactly the same (not needed)
+
+*7*. Output 
+<div class="fold s">
+```{r}
+dat_q5 %>% 
+  select(evolution_group, 
+         Number, 
+         Name, 
+         Total,
+         HP, 
+         Attack,
+         Defense,
+         `Special Attack`,
+         `Special Defense`,
+         Speed,
+         `Evolving from`,
+         `Evolving to`,
+         Level.x,
+         Condition.x,
+         `Evolution Type.x`) %>% 
+  rename(Level = Level.x,
+         Condition = Condition.x,
+         `Evolution Type` = `Evolution Type.x`) %>% 
+  fwrite('correct-output.csv')
+```
+</div>

@@ -1,0 +1,34 @@
+---
+title: "week 4 - overview"
+author: "Scott Gee"
+date: "30/03/2021"
+output: 
+  html_document:
+    css: "www/style.css"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<script src="www/hideOutput.js"></script>
+
+In this weeks problem, the first few questions are very similar to last week so you can amend your answers slightly.
+
+Once again you can use `map_df` to read in the files like this:
+
+```{r, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(readxl)
+
+sheet_names <- excel_sheets('data.xlsx')[1:5] # get the first 5 sheet names (exclude the targets sheet)
+
+sheet_names <- set_names(sheet_names, sheet_names) #name each object in the list with its name (helps for map_df)
+
+dat <- map_df(sheet_names, ~ read_excel('data.xlsx', sheet = .x), .id = 'store') # read in each sheet using the sheet name and then bind in to one data frame, creating the store column which will use the name of the sheet
+```
+
+This is the first exercise that requires joins and this can be done with `dplyr` and the [`inner_join`](https://dplyr.tidyverse.org/reference/join.html) function. This is done in a very similar way to SQL, you just need to state the columns you are joining by in the `by =` argument.
+
+After this you can use `mutate` and `group_by`, and `rank` from `dplyr` to answer the following questions. 
